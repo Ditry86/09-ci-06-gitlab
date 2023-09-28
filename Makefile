@@ -5,8 +5,7 @@ export YC_CLOUD_ID := $(shell cat init.conf | grep cloud_id | sed 's/cloud_id = 
 export YC_FOLDER_ID := $(shell cat init.conf | grep folder_id | sed 's/folder_id = //')
 export YC_ACCOUNT := $(shell cat init.conf | grep service_account | sed 's/service_account = //')
 export TF_VAR_zone := $(shell cat init.conf | grep zone | sed 's/zone = //')
-export JENKINS_AGENT := $(shell cat ext_ip 2> /dev/null | grep jenkins-agent | sed 's/jenkins-agent[[:space:]]*//')
-export JENKINS_MASTER := $(shell cat ext_ip 2> /dev/null | grep jenkins-master | sed 's/jenkins-master[[:space:]]*//')
+export RUNNER := $(shell cat ext_ip 2> /dev/null | grep gitlab-runner | sed 's/gitlab-runner[[:space:]]*//')
 
 prepare: cloud tf_init
 deploy: tf_plan tf_apply
@@ -39,7 +38,7 @@ get_ip:
 
 play:
 	@source auto/prepare_ansible.sh
-	@export ANSIBLE_HOST_KEY_CHECKING=False && cd playbook/ && ansible-playbook site.yml -i inventory/hosts.yml
+	@export ANSIBLE_HOST_KEY_CHECKING=False && cd playbook/ && ansible-playbook site.yml -vvv -i inventory/hosts.yml
 
 info:
 	@echo Your VM IP adresses:

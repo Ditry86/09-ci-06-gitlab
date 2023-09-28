@@ -1,4 +1,4 @@
-resource "yandex_compute_instance" "test_vm" {
+resource "yandex_compute_instance" "gitlab" {
   for_each = local.instances
   name = "${each.key}-01"
   platform_id = each.value.platform
@@ -10,7 +10,7 @@ resource "yandex_compute_instance" "test_vm" {
 
   boot_disk {
     initialize_params {
-      image_id = data.yandex_compute_image.centos7.id
+      image_id = each.value.image
     }
   }
 
@@ -20,6 +20,6 @@ resource "yandex_compute_instance" "test_vm" {
   }
 
   metadata = {
-    ssh-keys = "centos:${file("~/.ssh/id_ed25519.pub")}"
+    user-data = "${file("cloudconfig.yml")}"
   }
 }
